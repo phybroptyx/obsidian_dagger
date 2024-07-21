@@ -1,0 +1,3 @@
+---
+- name: Deploy VSphere Environment"
+  import_tasks: deploy_vsphere_environment.yml    # Notes

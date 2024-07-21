@@ -1,0 +1,18 @@
+---
+- name: Destroying network path to CDX-E
+  ansible.builtin.command: route del -net default netmask 0.0.0.0 gw 10.30.3.254 
+  delegate_to: localhost
+  ignore_errors: true
+  
+- name: Closing connection to CDX-E Network
+  community.vmware.vmware_guest_network:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    name: CDX-GTW-01
+    mac_address: 00:50:56:9d:6e:df
+    network_name: "CDX Staging"
+    state: present
+  delegate_to: localhost

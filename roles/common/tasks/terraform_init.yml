@@ -1,0 +1,6 @@
+---
+- name: Initialize Terraform Environment
+  ansible.builtin.command: terraform init
+  become: no
+  args:
+    chdir: "{{ terraform_folder_var }}"

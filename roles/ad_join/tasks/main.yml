@@ -1,0 +1,113 @@
+---
+- name: Gather All Windows Client VMs
+  community.vmware.vmware_vm_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    folder: "/CDX Datacenter/vm/CDX Environment/OBSIDIAN DAGGER/Blue Team/Clients"
+  register: client_list
+  delegate_to: localhost
+
+- name: Filter VMs with Windows guests
+  set_fact:
+    windows_clients: "{{ client_list.virtual_machines | selectattr('guest_fullname', 'match', '.*Microsoft Windows.*', 'i') | map(attribute='ip_address') | list }}"
+    # windows_clients: "{{ client_list.virtual_machines | selectattr('guest_fullname', 'match', '.*Microsoft Windows.*', 'i') | map(attribute='guest_name') | list }}"
+  delegate_to: localhost
+
+- name: Gather All Windows Server VMs
+  community.vmware.vmware_vm_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    folder: "/CDX Datacenter/vm/CDX Environment/OBSIDIAN DAGGER/Blue Team/Member Servers"
+  register: server_list
+  delegate_to: localhost
+
+- name: Filter VMs with Windows guests
+  set_fact:
+    windows_servers: "{{ server_list.virtual_machines | selectattr('guest_fullname', 'match', '.*Microsoft Windows.*', 'i') | map(attribute='ip_address') | list }}"
+    # windows_servers: "{{ server_list.virtual_machines | selectattr('guest_fullname', 'match', '.*Microsoft Windows.*', 'i') | map(attribute='guest_name') | list }}"
+  delegate_to: localhost
+
+- name: Concatenate lists
+  set_fact:
+    windows_systems: "{{ windows_clients + windows_servers }}"
+  delegate_to: localhost
+
+- name: List Systems to join Active Directory
+  debug:
+    var: windows_systems
+  delegate_to: localhost
+
+# - name: "Join to {{ ad_domain }} domain"
+#   ansible.windows.win_domain_membership:
+#     dns_domain_name: "{{ ad_domain }}"
+#     # hostname: mydomainclient
+#     domain_admin_user: "{{ domain_admin }}"
+#     domain_admin_password: "{{ ad_admin_pwd }}"
+#     # domain_ou_path: "OU=Windows,OU=Servers,DC=ansible,DC=vagrant"
+#     state: domain
+#   register: domain_state
+
+# - ansible.windows.win_reboot:
+#     when: domain_state.reboot_required
+
+- name: "Join Windows Systems to {{ ad_domain }} domain"
+  ansible.windows.win_powershell:
+    script: |
+      $domain = "{{ ad_domain }}"
+      $username = "{{ domain_admin }}"
+      $password = "{{ ad_admin_pwd }}" | ConvertTo-SecureString -asPlainText -Force
+      $local_admin = "{{ win_admin }}"
+      $local_pwd = "{{ win_admin_password }}" | ConvertTo-SecureString -asPlainText -Force
+      $credential = New-Object System.Management.Automation.PSCredential($username,$password)
+      $local_credential = New-Object System.Management.Automation.PSCredential($local_admin,$local_pwd)
+      Add-Computer -DomainName $domain -Credential $credential -LocalCredential $local_credential -Restart -Force
+  delegate_to: "{{ item }}"
+  loop: "{{ windows_systems }}"
+  ignore_errors: true
+
+# - name: "Join Windows Clients to {{ ad_domain }} domain"
+#   ansible.windows.win_powershell:
+#     script: |
+#       $domain = "{{ ad_domain }}"
+#       $username = "{{ domain_admin }}"
+#       $password = "{{ ad_admin_pwd }}" | ConvertTo-SecureString -asPlainText -Force
+#       $local_admin = "{{ win_admin }}"
+#       $local_pwd = "{{ win_admin_password }}" | ConvertTo-SecureString -asPlainText -Force
+#       $credential = New-Object System.Management.Automation.PSCredential($username,$password)
+#       $local_credential = New-Object System.Management.Automation.PSCredential($local_admin,$local_pwd)
+#       Add-Computer -DomainName $domain -Credential $credential -LocalCredential $local_credential -Restart -Force
+#   delegate_to: "{{ item }}"
+#   loop: "{{ windows_clients }}"
+
+# - ansible.windows.win_reboot:
+#   when: domain_state.reboot_required
+#   delegate_to: "{{ item }}"
+#   loop: "{{ windows_systems }}"
+
+# - name: "Join to {{ ad_domain }} domain"
+#   community.vmware.vmware_vm_shell:
+#     hostname: "{{ vcenter_hostname }}"
+#     username: "{{ vcenter_username }}"
+#     password: "{{ vcenter_password }}"
+#     validate_certs: "{{ vcenter_validate_certs }}"
+#     datacenter: "{{ vcenter_datacenter }}"
+#     vm_id: "{{ item }}"
+#     vm_username: "{{ win_admin }}"
+#     vm_password: "{{ win_admin_password }}"
+#     vm_shell: 'C:\Windows\System32\WindowsPowershell\v1.0\powershell.exe'
+#     vm_shell_args: |
+#       $domain = {{ ad_domain }}
+#       $username = {{ domain_admin }}
+#       $password = {{ ad_admin_pwd }} | ConvertTo-SecureString -asPlainText -Force
+#       $local_admin = {{ win_admin }}
+#       $local_pwd = {{ win_admin_password }} | ConvertTo-SecureString -asPlainText -Force
+#       $credential = New-Object System.Management.Automation.PSCredential($username,$password)
+#       $local_credential = New-Object System.Management.Automation.PSCredential($local_admin,$local_pwd)
+#       Add-Computer -DomainName $domain -Credential $credential -LocalCredential $local_credential -Restart -Force
+#     wait_for_process: true
+#   ignore_errors: false
+#   loop: "{{ windows_systems }}"

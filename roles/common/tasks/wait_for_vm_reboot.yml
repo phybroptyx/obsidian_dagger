@@ -1,0 +1,28 @@
+---
+- name: "Waiting for {{ vm }} to restart (Timeout: 5 min)..."
+  community.vmware.vmware_guest_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    name: "{{ vm }}"
+  delegate_to: localhost
+  register: vm_info
+  until: vm_info.instance.guest_tools_status == "guestToolsNotRunning"
+  retries: 60
+  delay: 5
+
+- name: "Waiting for {{ vm }} reboot to complete  (Timeout: 5 min)..."
+  community.vmware.vmware_guest_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    name: "{{ vm }}"
+  delegate_to: localhost
+  register: vm_info
+  until: vm_info.instance.guest_tools_status == "guestToolsRunning"
+  retries: 60
+  delay: 5

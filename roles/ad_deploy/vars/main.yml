@@ -1,0 +1,7 @@
+---
+##############################################################
+# Domain Controller: stk-dc-01.stark-industries.midgard.mrvl #
+##############################################################
+
+dc_forest_install: "{{ lookup('ansible.builtin.file', './files/STK-DC-01_Forest_Install.ps1') }}"
+dc_ad_config: "{{ lookup('ansible.builtin.file', './files/STARK_AD_Config.ps1') }}"

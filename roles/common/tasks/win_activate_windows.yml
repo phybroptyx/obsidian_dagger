@@ -1,0 +1,49 @@
+---
+- name: List Systems to be Activated
+  debug:
+    var: windows_vms
+
+- name: Waiting for Windows systems to be available...
+  community.vmware.vmware_guest_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    name: "{{ item }}"
+  delegate_to: localhost
+  register: vm_info
+  until: vm_info.instance.guest_tools_status == "guestToolsRunning"
+  retries: 60
+  delay: 5
+  loop:  "{{ windows_vms }}"
+
+- name: Setting Microsoft Windows Activation Source...
+  community.vmware.vmware_vm_shell:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    vm_id: "{{ item }}"
+    vm_username: "{{ win_admin }}"
+    vm_password: "{{ win_admin_password }}"
+    vm_shell: 'C:\Windows\System32\WindowsPowershell\v1.0\powershell.exe'
+    vm_shell_args: '-ExecutionPolicy Bypass -command C:\Windows\System32\cscript.exe C:\Windows\System32\slmgr.vbs /skms kms.activation.sls.microsoft.com'
+    wait_for_process: no
+  loop: "{{ windows_vms }}"
+
+- name: Activate Microsoft Windows...
+  community.vmware.vmware_vm_shell:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    vm_id: "{{ item }}"
+    vm_username: "{{ win_admin }}"
+    vm_password: "{{ win_admin_password }}"
+    vm_shell: 'C:\Windows\System32\WindowsPowershell\v1.0\powershell.exe'
+    vm_shell_args: '-ExecutionPolicy Bypass -command C:\Windows\System32\cscript.exe C:\Windows\System32\slmgr.vbs /ato'
+    wait_for_process: no
+  loop: "{{ windows_vms }}"

@@ -1,0 +1,9 @@
+---
+- name: Creating Server Objects
+  import_tasks: ../../common/tasks/win_configure_domain_server.yml    # Apply Server Configuration
+  vars:
+    config: "{{ dc_ad_server_config }}"
+    task_title: "Creating Server Objects"
+    process_wait: true
+    ignore_errors: false
+    # win_user: "{{ win_domain_admin }}"

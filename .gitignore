@@ -1,0 +1,6 @@
+
+vars/sensitive_vars.yml
+vars/vcenter_vars.yml
+*.tfstate
+*.backup
+*.tfvars

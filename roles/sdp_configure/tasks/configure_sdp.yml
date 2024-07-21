@@ -1,0 +1,14 @@
+---
+- name: Configuring SDP Router - {{ blue_sdp }}
+  import_tasks: ../../common/tasks/configure_vyos_router.yml
+  vars:
+    vm: "{{ blue_sdp }}"
+    vyos_configuration: "{{ blue_sdp_config }}"
+    task_title: Configuring SDP Router - {{ blue_sdp }}
+
+- name: Configuring SDP Router - {{ red_sdp }}
+  import_tasks: ../../common/tasks/configure_vyos_router.yml
+  vars:
+    vm: "{{ red_sdp }}"
+    vyos_configuration: "{{ red_sdp_config }}"
+    task_title: Configuring SDP Router - {{ red_sdp }}

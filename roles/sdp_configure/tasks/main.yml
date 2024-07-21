@@ -1,0 +1,25 @@
+---
+- name: Waiting for SDP Routers to start up...
+  community.vmware.vmware_guest_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    name: "{{ item }}"
+  delegate_to: localhost
+  register: vm_info
+  until: vm_info.instance.guest_tools_status == "guestToolsRunning"
+  retries: 60
+  delay: 5
+  with_items:
+    - "{{ blue_sdp }}"
+    - "{{ red_sdp }}"
+
+- name: Waiting for SDP Routers to be available for configuration...
+  ansible.builtin.wait_for:
+    timeout: 30
+  delegate_to: localhost
+
+- name: Configure Service Delivery Point Border Routers
+  import_tasks: configure_sdp.yml    # Notes

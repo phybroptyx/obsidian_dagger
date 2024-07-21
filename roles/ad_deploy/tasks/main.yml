@@ -1,0 +1,33 @@
+---
+# - name: Waiting for stk-dc-01 to be available...
+#   community.vmware.vmware_guest_info:
+#     hostname: "{{ vcenter_hostname }}"
+#     username: "{{ vcenter_username }}"
+#     password: "{{ vcenter_password }}"
+#     validate_certs: "{{ vcenter_validate_certs }}"
+#     datacenter: "{{ vcenter_datacenter }}"
+#     name: stk-dc-01.stark-industries.midgard.mrvl
+#   delegate_to: localhost
+#   register: vm_info
+#   until: vm_info.instance.guest_tools_status == "guestToolsRunning"
+#   retries: 60
+#   delay: 5
+
+- name: Ship Active Directory configuration script to stk-dc-01
+  ansible.windows.win_copy:
+    content: "{{ dc_ad_config }}"
+    dest: C:\Users\Administrator\Desktop\STARK_AD_Config.ps1
+  register: results
+  delegate_to: 4.78.128.20
+  delegate_facts: true
+  ignore_errors: true
+
+- name: Installing Active Directory Domain Services Binaries on stk-dc-01
+  import_tasks: ad_install.yml
+  vars:
+    vm: stk-dc-01.stark-industries.midgard.mrvl
+
+- name: Waiting for stk-dc-01 to reboot...
+  import_tasks: ../../common/tasks/wait_for_vm_reboot.yml
+  vars:
+    vm: stk-dc-01.stark-industries.midgard.mrvl

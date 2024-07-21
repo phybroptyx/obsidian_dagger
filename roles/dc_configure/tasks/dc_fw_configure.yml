@@ -1,0 +1,20 @@
+---
+- name: "Configuring Windows Defender Firewall on {{ vm }}"
+  community.vmware.vmware_vm_shell:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    vm_id: "{{ vm }}"
+    vm_username: "{{ win_admin }}"
+    vm_password: "{{ win_admin_password }}"
+    vm_shell: 'C:\Windows\System32\WindowsPowershell\v1.0\powershell.exe'
+    vm_shell_args: |
+      Get-NetConnectionProfile | Set-NetConnectionProfile -NetworkCategory Private
+      New-NetFirewallRule -DisplayName 'Allow ICMPv4-In' -Protocol ICMPv4
+      New-NetFirewallRule -DisplayName 'Allow ICMPv4-Out' -Protocol ICMPv4 -Direction Outbound
+      New-NetFirewallRule -DisplayName 'WinRM (HTTP-In)' -Direction Inbound -Action Allow -Protocol TCP -LocalPort 5985
+      New-NetFirewallRule -DisplayName 'WinRM (HTTPS-In)' -Direction Inbound -Action Allow -Protocol TCP -LocalPort 5986
+    wait_for_process: true
+  ignore_errors: false

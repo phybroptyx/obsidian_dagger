@@ -1,0 +1,25 @@
+---
+- name: Install {{ win_feature_name }}
+  community.vmware.vmware_vm_shell:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    vm_id: "{{ vm }}"
+    vm_username: "{{ win_admin }}"
+    vm_password: "{{ win_admin_password }}"
+    vm_shell: 'C:\Windows\System32\WindowsPowershell\v1.0\powershell.exe'
+    vm_shell_args: '-ExecutionPolicy Bypass -command "Install-WindowsFeature -name {{ win_feature }}"'
+    wait_for_process: yes
+  register: results
+
+- name: Display Results
+  debug:
+    var: results.changed
+
+# - name: Install {{ win_feature_name }}
+#   ansible.builtin.lineinfile:
+#     path: "{{ server_config }}"
+#     line: Install-WindowsFeature -name {{ win_feature }}
+#     create: yes

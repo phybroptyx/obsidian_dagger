@@ -1,0 +1,3 @@
+---
+- name: Deploy Service Delivery Point Border Routers
+  import_tasks: deploy_sdp.yml    # Notes

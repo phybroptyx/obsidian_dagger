@@ -1,0 +1,9 @@
+---
+- name: Creating OUs in Active Directory
+  import_tasks: ../../common/tasks/win_configure_domain_server.yml    # Apply Server Configuration
+  vars:
+    config: "{{ dc_ad_ou_config }}"
+    task_title: "Creating OUs in Active Directory"
+    process_wait: true
+    ignore_errors: false
+    # win_user: "{{ win_domain_admin }}"

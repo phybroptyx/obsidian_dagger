@@ -1,0 +1,8 @@
+---
+- name: Installing Active Directory Forest (stark-industries.midgard.mrvl) on stk-dc-01
+  import_tasks: ../../common/tasks/win_configure_server.yml    # Apply Server Configuration
+  vars:
+    config: "{{ dc_forest_install }}"
+    task_title: "Installing Active Directory Forest (stark-industries.midgard.mrvl) on stk-dc-01"
+    process_wait: false
+    ignore_errors: false

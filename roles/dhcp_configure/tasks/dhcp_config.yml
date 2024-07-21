@@ -1,0 +1,7 @@
+---
+- name: Applying DHCP configuration to {{ vm }}
+  import_tasks: ../../common/tasks/win_configure_domain_server.yml    # Apply Server Configuration
+  vars:
+    config: "{{ dc_dhcp_config }}"
+    task_title: "Configuring DHCP Server on {{ vm }}"
+    process_wait: true

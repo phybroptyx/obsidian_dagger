@@ -1,0 +1,3 @@
+---
+# vars file for gpo_deploy
+stark_default_domain_gpo_config: "{{ lookup('ansible.builtin.file', './files/STARK_Default_Domain_Policy.ps1') }}"

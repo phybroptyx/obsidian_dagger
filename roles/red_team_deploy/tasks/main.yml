@@ -1,0 +1,5 @@
+---
+# tasks file for red_team_deploy
+
+- name: Deploy Red Team Systems
+  import_tasks: red_team_deploy.yml

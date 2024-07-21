@@ -1,0 +1,21 @@
+---
+- name: "{{ task_title }}"
+  community.vmware.vmware_vm_shell:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    vm_id: "{{ vm }}"
+    vm_username: "vyos"
+    vm_password: "vyos"
+    vm_shell: "/bin/vbash"
+    vm_shell_cwd: "/tmp"
+    vm_shell_args: |-
+          -c "source /opt/vyatta/etc/functions/script-template
+          configure
+          {{ vyos_configuration }}
+          commit
+          save"
+    wait_for_process: false
+  delegate_to: localhost

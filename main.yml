@@ -1,0 +1,192 @@
+---
+# - name: CLEAN UP PREVIOUS SCENARIO
+#   hosts: localhost
+#   become: false
+#   gather_facts: false
+#   pre_tasks:
+#     - include_vars: global_vars.yml
+#   roles:
+#     - vsphere_reset
+
+# - name: CLONE REQUIRED VM TEMPLATES
+#   hosts: localhost
+#   become: false
+#   gather_facts: false
+#   pre_tasks:
+#     - include_vars: global_vars.yml
+#     - include_vars: vcenter_vars.yml
+#     - include_vars: sensitive_vars.yml
+#   roles:
+#     - clone_template
+
+- name: DEPLOY OBSIDIAN DAGGER VSPHERE FOLDER AND NETWORKING ENVIRONMENT
+  hosts: localhost
+  become: false
+  gather_facts: false
+  pre_tasks:
+    - include_vars: global_vars.yml
+    - include_vars: vcenter_vars.yml
+    - include_vars: sensitive_vars.yml
+  roles:
+    - vsphere_init
+
+- name: DEPLOY BLUE/RED TEAM SERVICE DELIVERY POINT ROUTERS # Border Routers connected to CDX-E Internet
+  hosts: localhost
+  become: false
+  gather_facts: false
+  pre_tasks:
+    - include_vars: global_vars.yml
+    - include_vars: vcenter_vars.yml
+    - include_vars: sensitive_vars.yml
+  roles:
+    - sdp_deploy
+    - sdp_configure
+
+- name: DEPLOY RED TEAM ENVIRONMENT
+  hosts: localhost
+  become: false
+  gather_facts: false
+  pre_tasks:
+    - include_vars: global_vars.yml
+    - include_vars: vcenter_vars.yml
+    - include_vars: sensitive_vars.yml
+  roles:
+    - red_team_deploy
+
+- name: DEPLOY BLUE TEAM MISSION PARTNER DOMAIN CONTROLLERS
+  hosts: localhost
+  become: false
+  gather_facts: false
+  pre_tasks:
+    - include_vars: global_vars.yml
+    - include_vars: vcenter_vars.yml
+    - include_vars: sensitive_vars.yml
+  roles:
+    - dc_deploy
+    - dc_configure
+    - ad_deploy
+
+- name: DEPLOY BLUE TEAM MISSION PARTNER MEMBER SERVERS
+  hosts: localhost
+  become: false
+  gather_facts: false
+  pre_tasks:
+    - include_vars: global_vars.yml
+    - include_vars: vcenter_vars.yml
+    - include_vars: sensitive_vars.yml
+  roles:
+    - mbr_server_deploy
+
+- name: DEPLOY BLUE TEAM MISSION PARTNER CLIENT WORKSTATIONS
+  hosts: localhost
+  become: false
+  gather_facts: false
+  pre_tasks:
+    - include_vars: global_vars.yml
+    - include_vars: vcenter_vars.yml
+    - include_vars: sensitive_vars.yml
+  roles:
+    - dev_deploy
+    - hr_deploy
+    - rsrch_deploy
+    - ops_deploy
+
+- name: DEPLOY MISSION PARTNER DOMAIN GROUP POLICIES
+  hosts: localhost
+  become: false
+  gather_facts: false
+  pre_tasks:
+    - include_vars: global_vars.yml
+    - include_vars: vcenter_vars.yml
+    - include_vars: sensitive_vars.yml
+  roles:
+    - gpo_deploy
+
+- name: ACTIVATE ALL WINDOWS HOSTS
+  hosts: localhost
+  become: false
+  gather_facts: false
+  pre_tasks:
+    - include_vars: global_vars.yml
+    - include_vars: vcenter_vars.yml
+    - include_vars: sensitive_vars.yml
+  roles:
+    - windows_activate
+
+# - name: GATHER ALL WINDOWS HOSTS
+#   hosts: localhost
+#   become: false
+#   gather_facts: false
+#   pre_tasks:
+#     - include_vars: global_vars.yml
+#     - include_vars: vcenter_vars.yml
+#     - include_vars: sensitive_vars.yml
+#   tasks:
+    
+#     - name: Gather All Windows Client VMs
+#       community.vmware.vmware_vm_info:
+#         hostname: "{{ vcenter_hostname }}"
+#         username: "{{ vcenter_username }}"
+#         password: "{{ vcenter_password }}"
+#         validate_certs: "{{ vcenter_validate_certs }}"
+#         folder: "/CDX Datacenter/vm/CDX Environment/OBSIDIAN DAGGER/Blue Team/Clients"
+#       register: client_list
+
+#     - name: Filter VMs with Windows guests
+#       set_fact:
+#         windows_clients: "{{ client_list.virtual_machines | selectattr('guest_fullname', 'match', '.*Microsoft Windows.*', 'i') | map(attribute='guest_name') | list }}"
+
+#     - name: Gather All Windows Server VMs
+#       community.vmware.vmware_vm_info:
+#         hostname: "{{ vcenter_hostname }}"
+#         username: "{{ vcenter_username }}"
+#         password: "{{ vcenter_password }}"
+#         validate_certs: "{{ vcenter_validate_certs }}"
+#         folder: "/CDX Datacenter/vm/CDX Environment/OBSIDIAN DAGGER/Blue Team/Member Servers"
+#       register: server_list
+
+#     - name: Filter VMs with Windows guests
+#       set_fact:
+#         windows_servers: "{{ server_list.virtual_machines | selectattr('guest_fullname', 'match', '.*Microsoft Windows.*', 'i') | map(attribute='guest_name') | list }}"
+
+#     - name: Concatenate lists
+#       set_fact:
+#         windows_systems: "{{ windows_clients + windows_servers }}"
+
+# - name: ACTIVATE ALL WINDOWS HOSTS
+#   hosts: windows
+#   become: false
+#   gather_facts: false
+#   serial: "20%"
+#   pre_tasks:
+#     - include_vars: global_vars.yml
+#     - include_vars: vcenter_vars.yml
+#     - include_vars: sensitive_vars.yml
+#   tasks:
+  
+#     - name: Activate Windows OS
+#       import_tasks: ./roles/common/tasks/win_activate_windows.yml
+#       vars:
+#         windows_vms: "{{ host }}"
+
+- name: JOIN SYSTEMS TO ACTIVE DIRECTORY
+  hosts: localhost
+  become: false
+  gather_facts: false
+  pre_tasks:
+    - include_vars: global_vars.yml
+    - include_vars: vcenter_vars.yml
+    - include_vars: sensitive_vars.yml
+  roles:
+    - ad_join
+
+# - name: DEPLOY VULNERABILITY PROFILES
+#   hosts: localhost
+#   become: false
+#   gather_facts: false
+#   pre_tasks:
+#     - include_vars: global_vars.yml
+#     - include_vars: vcenter_vars.yml
+#     - include_vars: sensitive_vars.yml
+#   roles:
+#     - vuln_deploy

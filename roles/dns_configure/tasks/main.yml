@@ -1,0 +1,19 @@
+---
+- name: Waiting for stk-dc-01 to be available...
+  community.vmware.vmware_guest_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    name: stk-dc-01.stark-industries.midgard.mrvl
+  delegate_to: localhost
+  register: vm_info
+  until: vm_info.instance.guest_tools_status == "guestToolsRunning"
+  retries: 60
+  delay: 5
+
+- name: Configuring DNS for stark-industries.midgard.mrvl domain
+  import_tasks: dns_configure.yml
+  vars:
+    vm: stk-dc-01.stark-industries.midgard.mrvl

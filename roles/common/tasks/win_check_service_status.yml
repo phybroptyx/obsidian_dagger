@@ -1,0 +1,51 @@
+---
+# - name: "{{ task_title }}"
+#   community.vmware.vmware_vm_shell:
+#     hostname: "{{ vcenter_hostname }}"
+#     username: "{{ vcenter_username }}"
+#     password: "{{ vcenter_password }}"
+#     validate_certs: "{{ vcenter_validate_certs }}"
+#     datacenter: "{{ vcenter_datacenter }}"
+#     vm_id: "{{ vm }}"
+#     vm_username: "{{ win_admin }}"
+#     vm_password: "{{ win_admin_password }}"
+#     vm_shell: 'C:\Windows\System32\WindowsPowershell\v1.0\powershell.exe'
+#     vm_shell_args: '-ExecutionPolicy Bypass -Command {Get-Status {{ service }} | Select-Object Status}'
+#     wait_for_process: true
+#   delegate_to: localhost
+#   ignore_errors: true
+#   register: service_status
+
+- name: "{{ task_title }}"
+  ansible.windows.win_command:
+    # hostname: 37.186.49.20
+    # connection_username: "{{ win_admin }}"
+    # connection_password: "{{ win_admin_password }}"
+    cmd: whoami.exe
+    # arguments: '/C sc query {{ service }}'
+  delegate_to: cdx-controller.cdx.lab
+  ignore_errors: false
+  register: service_status
+
+# - name:  Get VM ID
+#   vmware.vmware_rest.vcenter_vm_info:
+#     vcenter_hostname: "{{ vcenter_hostname }}"
+#     vcenter_username: "{{ vcenter_username }}"
+#     vcenter_password: "{{ vcenter_password }}"
+#     vcenter_validate_certs: "{{ vcenter_validate_certs }}"
+#     filter_names: 
+#       - "{{ vm }}"
+#   register: service_status
+
+# - name:  Get VM Service Status
+#   vmware.vmware_rest.vcenter_vm_guest_operations_info:
+#     vcenter_hostname: "{{ vcenter_hostname }}"
+#     vcenter_username: "{{ vcenter_username }}"
+#     vcenter_password: "{{ vcenter_password }}"
+#     vcenter_validate_certs: "{{ vcenter_validate_certs }}"
+#     vm: "vm-3621"
+#   register: service_status
+
+- name: Display Service Status
+  debug:
+    msg: "{{ service_status }}"

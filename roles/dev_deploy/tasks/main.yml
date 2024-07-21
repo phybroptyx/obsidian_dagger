@@ -1,0 +1,3 @@
+---
+- name: Deploy Blue Team Mission Partner Clients
+  import_tasks: dev_deploy.yml

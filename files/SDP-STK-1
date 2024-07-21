@@ -1,0 +1,19 @@
+set system host-name SDP-STK-1
+set system time-zone America/New_York
+set system domain-name stark-industries.midgard.mrvl
+set service ssh port 22
+set service ntp server 46.244.164.88
+set interfaces loopback lo address 9.9.9.1/32
+set interfaces ethernet eth0 address 4.140.27.162/15
+set interfaces ethernet eth0 description 'WAN'
+set interfaces ethernet eth1 address 4.78.128.1/21
+set interfaces ethernet eth1 description 'LAN'
+set interfaces ethernet eth2 address 10.20.30.1/24
+set interfaces ethernet eth2 description 'SOC'
+set protocols ospf area 5 network 4.140.0.0/15
+set protocols ospf area 5 network 4.78.128.0/21
+set protocols ospf parameters router-id 9.9.9.1
+set protocols ospf log-adjacency-changes
+set nat source rule 1 outbound-interface eth0
+set nat source rule 1 source address 4.78.128.0/21
+set nat source rule 1 translation address masquerade

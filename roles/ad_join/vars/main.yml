@@ -1,0 +1,4 @@
+---
+ad_domain: "stark-industries.midgard.mrvl"
+ad_admin_pwd: "{{ win_admin_password }}"
+domain_admin: "{{ win_domain_admin }}"

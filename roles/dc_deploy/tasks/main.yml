@@ -1,0 +1,5 @@
+---
+- name: Deploy Blue Team Mission Partner Domain Controllers
+  import_tasks: dc_deploy.yml
+  vars:
+    vm: stk-dc-01.stark-industries.midgard.mrvl

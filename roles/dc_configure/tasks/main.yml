@@ -1,0 +1,36 @@
+---
+- name: Waiting for stk-dc-01 to be available...
+  community.vmware.vmware_guest_info:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    name: stk-dc-01.stark-industries.midgard.mrvl
+  delegate_to: localhost
+  register: vm_info
+  until: vm_info.instance.guest_tools_status == "guestToolsRunning"
+  retries: 60
+  delay: 5
+
+- name: Applying firewall configuration to stk-dc-01
+  import_tasks: dc_fw_configure.yml
+  vars:
+    vm: stk-dc-01.stark-industries.midgard.mrvl
+
+- name: Applying server configuration to stk-dc-01
+  import_tasks: dc_configure.yml
+  vars:
+    vm: stk-dc-01.stark-industries.midgard.mrvl
+
+- name: Applying WinRM configuration to stk-dc-01
+  import_tasks: winrm_configure.yml
+  vars:
+    vm: stk-dc-01.stark-industries.midgard.mrvl
+
+- name: "Wait for stk-dc-01 to become reachable over WinRM (Timeout: 5 min)..."
+  ansible.builtin.wait_for_connection:
+    delay: 15
+    sleep: 5
+    connect_timeout: 10
+    timeout: 300

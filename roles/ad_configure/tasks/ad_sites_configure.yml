@@ -1,0 +1,8 @@
+---
+- name: Applying Active Directory Sites configuration to {{ vm }}
+  import_tasks: ../../common/tasks/win_configure_domain_server.yml    # Apply Server Configuration
+  vars:
+    config: "{{ dc_ad_sites_config }}"
+    task_title: "Applying Active Directory Sites configuration to {{ vm }}"
+    process_wait: true
+    ignore_errors: false

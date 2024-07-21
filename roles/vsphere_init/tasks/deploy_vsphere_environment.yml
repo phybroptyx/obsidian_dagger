@@ -1,0 +1,19 @@
+---
+- name: Initialize Terraform Environment
+  import_tasks: ../common/tasks/terraform_init.yml    # 'terraform init''
+  vars:
+    terraform_folder_var: "{{ terraform_root }}"
+
+- name: Sharing Terraform Lock File
+  ansible.builtin.command: cp .terraform.lock.hcl vm/    # 'Copy .terraform.lock.hcl file''
+  become: no
+  args:
+    chdir: "/root/ansible/playbooks/obsidian_dagger/tf"
+
+- name: Apply Terraform Configuration
+  import_tasks: ../common/tasks/terraform_apply_module.yml    # 'terraform apply''
+  vars:
+    terraform_folder_var: "{{ terraform_root }}"
+    task_title: "Provisioning VSphere Networks and VCenter Folders Environment"
+    module: environment
+

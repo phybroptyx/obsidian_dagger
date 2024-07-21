@@ -1,0 +1,7 @@
+---
+- name: Applying DNS configuration to {{ vm }}
+  import_tasks: ../../common/tasks/win_configure_domain_server.yml    # Apply Server Configuration
+  vars:
+    config: "{{ dc_dns_config }}"
+    task_title: "Applying DNS configuration to {{ vm }}"
+    process_wait: true

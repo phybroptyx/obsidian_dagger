@@ -1,0 +1,15 @@
+---
+- name: "{{ task_title }}"
+  community.vmware.vmware_vm_shell:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    vm_id: "{{ vm }}"
+    vm_username: "{{ win_admin }}"
+    vm_password: "{{ win_admin_password }}"
+    vm_shell: 'C:\Windows\System32\cmd.exe'
+    vm_shell_args: '/C Powershell.exe -ExecutionPolicy Bypass -command {{ config }}'
+    wait_for_process: "{{ process_wait }}"
+  ignore_errors: "{{ ignore_errors }}"

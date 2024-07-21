@@ -1,0 +1,15 @@
+---
+# vars file for clone_template 
+obs_templates:   
+  - { src: "Base_Win7_Ent", dest: "Templ_Win7_Ent", host: "cdx-esxi-03.cdx.lab", disk: "Priority_1_03", location: cdx-esxi-03 }
+  - { src: "Base_Win8.1_Pro", dest: "Templ_Win8.1_Pro", host: "cdx-esxi-03.cdx.lab", disk: "Priority_1_03", location: cdx-esxi-03 }
+  - { src: "Base_Win10_Pro_1809", dest: "Templ_Win10_Pro_1809", host: "cdx-esxi-03.cdx.lab", disk: "Priority_1_03", location: cdx-esxi-03 }
+  - { src: "Base_Win10_Pro_1511", dest: "Templ_Win10_Pro_1511", host: "cdx-esxi-03.cdx.lab", disk: "Priority_1_03", location: cdx-esxi-03 }
+  - { src: "Base_VyOS_1.5", dest: "Templ_VyOS_1.5", host: "cdx-esxi-01.cdx.lab", disk: "Priority_1_01", location: cdx-esxi-01 }
+  - { src: "Base_Server2008R2", dest: "Templ_Server2008R2", host: "cdx-esxi-02.cdx.lab", disk: "Priority_1_02", location: cdx-esxi-02 }
+  - { src: "Base_Server2012R2", dest: "Templ_Server2012R2", host: "cdx-esxi-02.cdx.lab", disk: "Priority_1_02", location: cdx-esxi-02 }
+  - { src: "Base_Server2012R2", dest: "Templ_Server2012R2_3", host: "cdx-esxi-03.cdx.lab", disk: "Priority_1_03", location: cdx-esxi-03 }
+  - { src: "Base_Server2016", dest: "Templ_Server2016", host: "cdx-esxi-02.cdx.lab", disk: "Priority_1_02", location: cdx-esxi-02 }
+  - { src: "Base_Fedora_38", dest: "Templ_Fedora_38", host: "cdx-esxi-03.cdx.lab", disk: "Priority_1_03", location: cdx-esxi-03 }
+  - { src: "Base_Ubuntu_21.10", dest: "Templ_Ubuntu_21.10", host: "cdx-esxi-03.cdx.lab", disk: "Priority_1_03", location: cdx-esxi-03 }
+  - { src: "Base_Kali_2023.3", dest: "Templ_Kali_2023.3", host: "cdx-esxi-03.cdx.lab", disk: "Priority_1_03", location: cdx-esxi-03 }

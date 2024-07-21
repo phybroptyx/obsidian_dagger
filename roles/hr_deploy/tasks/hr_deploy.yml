@@ -1,0 +1,12 @@
+---
+# - name: Initializing Terraform Environment
+#   import_tasks: ../common/tasks/terraform_init.yml    # 'terraform init''
+#   vars:
+#     terraform_folder_var: "{{ terraform_root }}/vm"
+
+- name: Applying Terraform Configuration
+  import_tasks: ../common/tasks/terraform_apply_module.yml    # 'terraform apply''
+  vars:
+    module: "STARK-HR"
+    terraform_folder_var: "{{ terraform_root }}/vm"
+    task_title: "Deploying OBSIDIAN DAGGER Clients (Human Resources Department)"

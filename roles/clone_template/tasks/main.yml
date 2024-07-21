@@ -1,0 +1,19 @@
+---
+# tasks file for clone_template
+
+- name: Cloning required templates to hosts
+  community.vmware.vmware_guest:
+    hostname: "{{ vcenter_hostname }}"
+    username: "{{ vcenter_username }}"
+    password: "{{ vcenter_password }}"
+    datacenter: "{{ vcenter_datacenter }}"
+    validate_certs: "{{ vcenter_validate_certs }}"
+    folder: /_Templates/{{ item.location }}
+    name: "{{ item.dest }}"
+    template: "{{ item.src }}"
+    is_template: true
+    datastore: "{{ item.disk }}"
+    esxi_hostname: "{{ item.host }}"
+  delegate_to: localhost
+  with_items:
+    "{{ obs_templates }}"

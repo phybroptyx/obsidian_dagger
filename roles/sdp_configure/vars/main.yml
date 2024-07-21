@@ -1,0 +1,9 @@
+---
+##############################################################
+#           Service Delivery Point Border Routers            #
+##############################################################
+
+blue_sdp: SDP-STK-1
+red_sdp: SDP-TGB-1
+blue_sdp_config: "{{ lookup('ansible.builtin.file', './files/{{ blue_sdp }}') }}"
+red_sdp_config: "{{ lookup('ansible.builtin.file', './files/{{ red_sdp }}') }}"

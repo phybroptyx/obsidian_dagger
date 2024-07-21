@@ -1,0 +1,26 @@
+---
+# tasks file for gpo_deploy
+- name: Ship Group Policy Objects - STARK Default Domain Policy script to stk-dc-01
+  ansible.windows.win_copy:
+    content: "{{ stark_default_domain_gpo_config }}"
+    dest: C:\Users\Administrator\Desktop\STARK_Default_Domain_Policy.ps1
+  register: results
+  delegate_to: 4.78.128.20
+  delegate_facts: true
+  ignore_errors: true
+
+- name: Ship GPO Supporting Files
+  ansible.windows.win_copy:
+    src: ./files/Images
+    dest: C:\Windows\SYSVOL\domain\scripts\
+  delegate_to: 4.78.128.20
+
+- name: Deploy Group Policy Objects - STARK Default Domain Policy
+  import_tasks: gpo_deploy.yml
+  vars:
+    vm: stk-dc-01.stark-industries.midgard.mrvl
+
+- name: Waiting for stk-dc-01 to reboot...
+  import_tasks: ../../common/tasks/wait_for_vm_reboot.yml
+  vars:
+    vm: stk-dc-01.stark-industries.midgard.mrvl
