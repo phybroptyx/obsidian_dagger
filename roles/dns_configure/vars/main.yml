@@ -1,6 +1,0 @@
----
-##############################################################
-# Domain Controller: stk-dc-01.stark-industries.midgard.mrvl #
-##############################################################
-
-dc_dns_config: "{{ lookup('ansible.builtin.file', './files/STK-DC-01_DNS_Config.ps1') }}"

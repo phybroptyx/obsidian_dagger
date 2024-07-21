@@ -1,9 +1,0 @@
----
-- name: Creating Workstation Objects
-  import_tasks: ../../common/tasks/win_configure_domain_server.yml    # Apply Server Configuration
-  vars:
-    phase_config: "{{ dc_ad_workstation_config }}"
-    task_title: "Creating Workstation Objects"
-    process_wait: true
-    ignore_errors: false
-    # win_user: "{{ win_domain_admin }}"
